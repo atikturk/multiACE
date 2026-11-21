@@ -3802,6 +3802,7 @@ class FilamentFeed:
         if stage is not None:
             stage = stage.lower()
         is_printing = gcmd.get_int('PRINTING', 0, minval=0, maxval=1)
+        is_replenish = gcmd.get_int('REPLENISH', 0, minval=0, maxval=1)
         need_save = gcmd.get_int('SAVE', 1, minval=0, maxval=1)
 
         raw_msg = None
@@ -3841,7 +3842,9 @@ class FilamentFeed:
                 logging.info("[feed] FEED_AUTO LOAD skipped: channel[%d] already FEED_STA_LOAD_FINISH", channel)
                 return
 
-            if is_printing == 1:
+            if is_printing == 1 and not (
+                    is_replenish == 1 and
+                    self.channel_state[channel] == FEED_STA_PRELOAD_FINISH):
                 logging.info("[feed] FEED_AUTO LOAD skipped: channel[%d] is_printing=1", channel)
                 return
 
